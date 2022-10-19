@@ -79,9 +79,8 @@ class BaseCameraView:UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
         DispatchQueue.main.sync {
             let frame:CGRect
 
-            guard let orientation = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.windowScene?.interfaceOrientation else { return }
 
-            if orientation == .portrait || orientation == .portraitUpsideDown { //縦向き
+            if pixcelSize.width/pixcelSize.height <= self.frame.width/self.frame.height { //縦向き
                 let W = self.frame.height * pixcelSize.width/pixcelSize.height
                 let H = self.frame.height
                 frame = CGRect(x: (self.frame.width - W)/2, y: 0, width : W, height: H)

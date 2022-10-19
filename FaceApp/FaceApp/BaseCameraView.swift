@@ -16,6 +16,16 @@ class BaseCameraView:UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
 
     let myQueue       = DispatchQueue.init(label: "vision")
     let overView:BaseCameraOverView = BaseCameraOverView()
+    
+    let handInfos: [[VNHumanHandPoseObservation.JointName]]
+        = [
+            [.wrist, .thumbCMC,  .thumbMP,   .thumbIP,   .thumbTip],
+            [.wrist, .indexMCP,  .indexPIP,  .indexDIP,  .indexTip],
+            [.wrist, .middleMCP, .middlePIP, .middleDIP, .middleTip],
+            [.wrist, .ringMCP,   .ringPIP,   .ringDIP,   .ringTip],
+            [.wrist, .littleMCP, .littlePIP, .littleDIP, .littleTip],
+        ]
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         _ = initCaptureSession
@@ -90,7 +100,7 @@ class BaseCameraView:UIView, AVCaptureVideoDataOutputSampleBufferDelegate {
                 frame = CGRect(x: 0, y: (self.frame.height - H)/2, width : W, height: H)
             }
           
-            let requests:[VNImageBasedRequest] = ContentView.shared?.facePointOn.value == true ? [VNFaceLandmarkRequest(frame:frame), VNFaceRectanglesRequest()] : []
+            let requests:[VNImageBasedRequest] = ContentView.shared?.facePointOn.value == true ? [VNFaceLandmarkRequest(frame:frame), VNFaceRectanglesRequest(), VNHumanHandRequest(frame:frame)] : []
 
             try? VNImageRequestHandler(cvPixelBuffer:pixcelBuf , options:[:])
                 .perform(requests)
@@ -118,7 +128,8 @@ extension BaseCameraView {
         
             DispatchQueue.main.async {
                 self.overView.faces = results.map { face in
-                    return FaceInfo(landmarks:[
+                    return LandMarks(chirality: .unknown,
+                                     landmarks:[
                         Landmark(name:"faceContour" , points: face.landmarks?.faceContour?.normalizedPoints ?? [], mainFrame: frame, faceframe: face.boundingBox),  // 輪郭
                         Landmark(name:"rightEyebrow", points: face.landmarks?.rightEyebrow?.normalizedPoints ?? [], mainFrame: frame, faceframe: face.boundingBox),  // 右眉
                         Landmark(name:"rightEye"  , points: face.landmarks?.rightEye?.normalizedPoints ?? [],   mainFrame: frame, faceframe: face.boundingBox),  // 右目
@@ -156,24 +167,67 @@ extension BaseCameraView {
             }
         }
     }
+    
+    
+    func VNHumanHandRequest(frame:CGRect) -> VNDetectHumanHandPoseRequest {
+        return VNDetectHumanHandPoseRequest(){ request, error in
+            if (error != nil)
+            {
+                print("FaceDetection error: \(String(describing: error)).")
+                return ;
+            }
+            guard let results = request.results as? [VNHumanHandPoseObservation] else { return }
+            
+            DispatchQueue.main.async {
+                self.overView.hands =  results.map { hand in
+                    let normalFrame = CGRect(x: 0.0, y: 0.0, width: 1.0, height: 1.0)
+                    /*
+                    let landmarks = ([ .thumb, .indexFinger, .middleFinger, .ringFinger, .littleFinger ]
+                                     as [VNHumanHandPoseObservation.JointsGroupName])
+                                    .compactMap{ try? hand.recognizedPoints($0) }
+                                    .map{ $0.map{ _, point in point.location } }
+                                    .map{ Landmark(name:"nil",  points: $0, mainFrame: frame, faceframe: normalFrame) }
+                     */
+                    
+                    let landmarks = self.handInfos.map{
+                                        $0.compactMap{ try? hand.recognizedPoint($0) }
+                                          .map{ $0.location }
+                                    }
+                                    .map{ Landmark(name:"hand",  points: $0, mainFrame: frame, faceframe: normalFrame) }
+                    
+                    
+                    return LandMarks(chirality: hand.chirality, landmarks: landmarks)
+                    
+                }
+            }
+            
+            DispatchQueue.main.async {
+                self.overView.setNeedsDisplay();
+            }
+            
+        }
+    }
 }
 
 class BaseCameraOverView : UIView {
 
-    var faces:[FaceInfo] = []
+    var faces:[LandMarks] = []
+    var hands:[LandMarks] = []
 
     private let pointColorDic = [
         "rightPupil" : UIColor.red,
-        "leftPupil" : UIColor.red,
+        "leftPupil"  : UIColor.red,
     ]
 
     private let greenOpenLine = ["faceContour","noseCrest","medianLine"];
+    private let orangeOpenLine = ["hand"];
 
     override func draw(_ rect: CGRect) {
 
         if(ContentView.shared?.facePointOn.value == false) { return }
-
-        for face in self.faces{
+        
+        let marks = faces + hands
+        for face in marks {
             for landmark in face.landmarks {
                 let pointColor:UIColor = pointColorDic[landmark.name] ?? UIColor.yellow
 
@@ -205,6 +259,8 @@ class BaseCameraOverView : UIView {
                     
                     if greenOpenLine.contains(landmark.name){
                         UIColor.green.setStroke()
+                    } else if orangeOpenLine.contains(landmark.name){
+                        UIColor.orange.setStroke()
                     } else {
                         path.close()
                         UIColor.blue.setStroke()

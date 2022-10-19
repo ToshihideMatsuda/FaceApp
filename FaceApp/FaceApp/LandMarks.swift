@@ -6,8 +6,10 @@
 //
 import SwiftUI
 import Foundation
+import Vision
 
-struct FaceInfo {
+struct LandMarks {
+    let chirality:VNChirality
     let landmarks:[Landmark]
 }
 

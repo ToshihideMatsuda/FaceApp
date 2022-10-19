@@ -13,7 +13,7 @@
 		D2D86FE428FF935200C2D67B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2D86FE328FF935200C2D67B /* Preview Assets.xcassets */; };
 		D2D8700728FF94DF00C2D67B /* BaseCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D8700628FF94DF00C2D67B /* BaseCameraView.swift */; };
 		D2D8700928FF95CF00C2D67B /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D8700828FF95CF00C2D67B /* CameraView.swift */; };
-		D2D8700B28FF9ACE00C2D67B /* FaceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D8700A28FF9ACE00C2D67B /* FaceInfo.swift */; };
+		D2D8700B28FF9ACE00C2D67B /* LandMarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D8700A28FF9ACE00C2D67B /* LandMarks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,7 +43,7 @@
 		D2D86FF328FF935200C2D67B /* FaceAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FaceAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2D8700628FF94DF00C2D67B /* BaseCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCameraView.swift; sourceTree = "<group>"; };
 		D2D8700828FF95CF00C2D67B /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
-		D2D8700A28FF9ACE00C2D67B /* FaceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceInfo.swift; sourceTree = "<group>"; };
+		D2D8700A28FF9ACE00C2D67B /* LandMarks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandMarks.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				D2D86FDC28FF935100C2D67B /* FaceApp.swift */,
-				D2D8700A28FF9ACE00C2D67B /* FaceInfo.swift */,
+				D2D8700A28FF9ACE00C2D67B /* LandMarks.swift */,
 				D2D8700628FF94DF00C2D67B /* BaseCameraView.swift */,
 				D2D8700828FF95CF00C2D67B /* CameraView.swift */,
 				D2D86FDE28FF935100C2D67B /* ContentView.swift */,
@@ -242,7 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2D8700728FF94DF00C2D67B /* BaseCameraView.swift in Sources */,
-				D2D8700B28FF9ACE00C2D67B /* FaceInfo.swift in Sources */,
+				D2D8700B28FF9ACE00C2D67B /* LandMarks.swift in Sources */,
 				D2D86FDF28FF935100C2D67B /* ContentView.swift in Sources */,
 				D2D86FDD28FF935100C2D67B /* FaceApp.swift in Sources */,
 				D2D8700928FF95CF00C2D67B /* CameraView.swift in Sources */,
